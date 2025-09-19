@@ -2,10 +2,10 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
+# nhập số lượng cluster
+num_clusters = int(input("Nhập số lượng cluster: "))
 
-# Khởi tạo cluster ban đầu
-
-num_clusters = 4
+# khởi tạo các tâm ban đầu ngẫu nhiên
 initial_centroids = np.random.uniform(-500, 500, size=(num_clusters, 2))
 
 # Tìm khoảng cách nhỏ nhất giữa các tâm ban đầu
@@ -23,37 +23,19 @@ print("Bound size:", min_pairwise_distance)
 
 plt.scatter(initial_centroids[:,0], initial_centroids[:,1], color="purple", label="Init centers")
 
-
 # Sinh dữ liệu quanh các tâm
+cluster_data_list = []
+for id_cluster in range(num_clusters):
+    cur_cluster = np.random.uniform(
+        low=[initial_centroids[id_cluster][0] - min_pairwise_distance, initial_centroids[id_cluster][1] - min_pairwise_distance],
+        high=[initial_centroids[id_cluster][0] + min_pairwise_distance, initial_centroids[id_cluster][1] + min_pairwise_distance],
+        size=(50, 2)
+    )
+    cluster_data_list.append(cur_cluster)
+    plt.scatter(cur_cluster[:,0], cur_cluster[:,1], color="blue", alpha=0.5)
 
-cluster_data_1 = np.random.uniform(
-    low=[initial_centroids[0][0] - min_pairwise_distance, initial_centroids[0][1] - min_pairwise_distance],
-    high=[initial_centroids[0][0] + min_pairwise_distance, initial_centroids[0][1] + min_pairwise_distance],
-    size=(50, 2)
-)
-cluster_data_2 = np.random.uniform(
-    low=[initial_centroids[1][0] - min_pairwise_distance, initial_centroids[1][1] - min_pairwise_distance],
-    high=[initial_centroids[1][0] + min_pairwise_distance, initial_centroids[1][1] + min_pairwise_distance],
-    size=(50, 2)
-)
-cluster_data_3 = np.random.uniform(
-    low=[initial_centroids[2][0] - min_pairwise_distance, initial_centroids[2][1] - min_pairwise_distance],
-    high=[initial_centroids[2][0] + min_pairwise_distance, initial_centroids[2][1] + min_pairwise_distance],
-    size=(50, 2)
-)
-cluster_data_4 = np.random.uniform(
-    low=[initial_centroids[3][0] - min_pairwise_distance, initial_centroids[3][1] - min_pairwise_distance],
-    high=[initial_centroids[3][0] + min_pairwise_distance, initial_centroids[3][1] + min_pairwise_distance],
-    size=(50, 2)
-)
-
-plt.scatter(cluster_data_1[:,0], cluster_data_1[:,1], color="blue", alpha=0.5)
-plt.scatter(cluster_data_2[:,0], cluster_data_2[:,1], color="blue", alpha=0.5)
-plt.scatter(cluster_data_3[:,0], cluster_data_3[:,1], color="blue", alpha=0.5)
-plt.scatter(cluster_data_4[:,0], cluster_data_4[:,1], color="blue", alpha=0.5)
-
-# gộp tất cả điểm dữ liệu
-data_points = np.concatenate((initial_centroids, cluster_data_1, cluster_data_2, cluster_data_3, cluster_data_4), axis=0)
+# gộp tất cả điểm dữ liệu (bao gồm cả các tâm ban đầu và dữ liệu sinh ra)
+data_points = np.concatenate([initial_centroids] + cluster_data_list, axis=0)
 num_points = len(data_points)
 
 plt.show()
@@ -69,7 +51,7 @@ rand_idx = np.random.randint(0, num_points)
 first_centroid = data_points[rand_idx]
 centroids.append(first_centroid)
 
-# chọn thêm các tâm còn lại
+# chọn thêm các tâm còn lại theo KMeans++
 while len(centroids) < num_clusters:
     for i in range(num_points):
         min_distance = 1e18
@@ -81,7 +63,6 @@ while len(centroids) < num_clusters:
 
     total_distance = np.sum(min_distances)
     probs = min_distances / total_distance
-
     next_idx = np.random.choice(num_points, p=probs)
     centroids.append(data_points[next_idx])
 
@@ -93,10 +74,10 @@ plt.scatter(centroids[:,0], centroids[:,1], color="red", marker="x", s=200)
 plt.title("KMeans++ Init")
 plt.show()
 
-
 # KMeans update
 
-max_iterations = 25
+
+max_iterations = 30
 for iteration in range(max_iterations):
     assignments = []
     for i in range(num_points):
@@ -130,10 +111,11 @@ for iteration in range(max_iterations):
 
 # Vẽ kết quả cuối
 
-colors = ["blue", "green", "orange", "purple"]
+
+colors = ["blue", "green", "orange", "purple", "yellow", "cyan", "pink", "brown", "gray", "olive","cyan","magenta","maroon","navy","teal","violet","indigo","olive","orchid","peru","rosybrown","sandybrown","sienna","springgreen","tan","thistle","tomato","turquoise","violet","wheat","yellowgreen"]
 for k in range(num_clusters):
     cluster_points = data_points[assignments == k]
-    plt.scatter(cluster_points[:,0], cluster_points[:,1], alpha=0.5, color=colors[k])
+    plt.scatter(cluster_points[:,0], cluster_points[:,1], alpha=0.5, color=colors[k % len(colors)])
 plt.scatter(centroids[:,0], centroids[:,1], color="black", marker="x", s=200)
 plt.title("Final KMeans clustering")
 plt.show()
