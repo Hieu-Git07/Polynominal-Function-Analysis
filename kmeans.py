@@ -112,7 +112,7 @@ for iteration in range(max_iterations):
 # Vẽ kết quả cuối
 
 
-colors = ["blue", "green", "orange", "purple", "yellow", "cyan", "pink", "brown", "gray", "olive","cyan","magenta","maroon","navy","teal","violet","indigo","olive","orchid","peru","rosybrown","sandybrown","sienna","springgreen","tan","thistle","tomato","turquoise","violet","wheat","yellowgreen"]
+colors = ["blue", "green", "orange", "purple", "yellow", "cyan", "pink", "brown", "gray", "olive","cyan","magenta","maroon","navy","teal","violet","indigo","olive","orchid","peru","rosybrown","sandybrown","sienna","springgreen","tan","thistle","tomato","turquoise","violet","wheat","yellowgreen"] 
 for k in range(num_clusters):
     cluster_points = data_points[assignments == k]
     plt.scatter(cluster_points[:,0], cluster_points[:,1], alpha=0.5, color=colors[k % len(colors)])
